@@ -6,16 +6,19 @@ El diseño previene el acoplamiento directo a proveedores externos y asegura la 
 
 El sistema funciona de manera agnóstica a las divisas configuradas. En su estado actual, se entrega pre-configurado para convertir entre la **Unidad de Fomento (UF) y el Peso Chileno (CLP)**, consumiendo el valor oficial a través del proveedor comunitario `findic.cl`.
 
-## Arquitectura
+## Arquitectura & Stack Tecnológico
 
-La arquitectura del proyecto se estructura bajo lineamientos estrictos de **Diseño Orientado al Dominio (Domain-Driven Design / DDD)** y el patrón **Puertos y Adaptadores (Arquitectura Hexagonal)**.
+Proyecto construido bajo los principios de **Arquitectura Hexagonal (Puertos y Adaptadores)**, garantizando el desacoplamiento total del dominio matemático respecto a la infraestructura de red.
 
-1. **Agnosticismo de Divisas**: El núcleo de conversión ignora la existencia de la "UF" o el "CLP". Las operaciones operan a través de entidades genéricas y un contrato abstracto de proveedor. Agregar nuevas divisas sólo requiere inyectar un nuevo adaptador sin alterar la lógica matemática existente.
-2. **Caché en Memoria (Redis)**: Para evitar consultas innecesarias sobre un valor que permanece fijo dentro de un mismo día calendario, el sistema deposita la tasa de cambio en Redis al inicio del ciclo diario. A esta entrada se le asigna un tiempo de vida (*Time-To-Live* / TTL) dinámico programado para expirar a las `00:00:01` del día siguiente (horario local).
-3. **Persistencia de Respaldo (SQLite)**: Ante una interrupción simultánea del proveedor de datos de primera línea y el nodo de caché, el sistema recurre a un registro final inmutable alojado en un archivo SQLite como fallback, retornando la última tasa estable comprobada.
-4. **Rate-Limiting**: En la capa del adaptador externo, los reintentos fallidos se gestionan con retrasos programados progresivamente mayores más una distorsión aleatoria (*Exponential Backoff con Jitter*). El tráfico se regula mediante rate-limiters ajustados nativamente en memoria, los cuales penalizan agresivamente la inyección sistemática de peticiones no autorizadas o lecturas anómalas.
-5. **Validación Fail-Fast de Entorno**: El sistema valida toda variable de entorno contra un esquema estricto (`Joi`) en tiempo de arranque. Si se omite una credencial base de red o un token no expuesto físicamente en el repositorio (controlado vía `.gitignore`), la inicialización se interrumpe de inmediato para evitar degradación silenciosa en producción.
-6. **Decisión de Proveedores Externos (ADR)**: El proveedor `mindicador.cl` fue excluido por caída sistémica irresoluble. El `Banco Central de Chile (BCCH)` fue excluido para evitar inyección cruda de tokens en URL (vulnerabilidad de fuga). `RapidAPI` y `Web Scraping del SII` fueron retirados por SLA bajo / inestabilidad estructural. El sistema asienta sobre `findic.cl` sin tokens como proveedor óptimo actual.
+**Stack y Dependencias Core:**
+- **Frontend:** Vue 3 (Composition API) + Vite + PrimeVue.
+- **Backend:** Node.js + NestJS (TypeScript).
+- **Caché:** Redis (in-memory) para latencias submilisegundo escalables, respaldado con un Time-To-Live dinámico al cierre del día.
+- **Persistencia Fallback:** SQLite (base estática inmutable ante fallos sistémicos).
+- **Proveedor Externo (API):** `findic.cl`. *(Nota: `mindicador.cl` o el `BCCH` fueron excluidos deliberadamente dada la caída permanente de sus servicios o la vulnerabilidad de uso de tokens en URLs).*
+
+**Resiliencia Operativa:**
+El ecosistema implementa prevención de fallos en cascada (Caché -> API con *Exponential Backoff* -> Fallback a BD), limitación asimétrica de ráfagas de tráfico (*Rate-Limiting*) y arranque protegido por esquemas (`Joi`) que prohíben instanciaciones degradadas por falta de variables.
 ---
 
 ## Requisitos Previos
@@ -31,13 +34,13 @@ La arquitectura del proyecto se estructura bajo lineamientos estrictos de **Dise
 docker compose up -d
 ```
 
-Este comando levanta la orquestación completa:
+Este comando levanta la orquestación completa (API, frontend web y bases de datos integradas).
 
-- Red de exposición de puertos.
-- Instancia y servicio Redis en memoria.
-- Volumen contenedor del gestor SQLite persistente.
-- Servidor REST principal en `localhost:3000`.
-- Frontend interactivo Vue+Vite en `localhost:5173`.
+### Accesos Rápidos
+Una vez levantado el entorno, todo estará expuesto en tu `localhost`:
+- 🖥️ **Aplicación Web (UI):** [http://localhost:5173](http://localhost:5173)
+- 📋 **Documentación API (Swagger):** [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+- 🩺 **Estado del Sistema:** [http://localhost:3000/health](http://localhost:3000/health)
 
 ---
 
