@@ -15,7 +15,7 @@ export class ExchangeRate {
    * Convierte un monto de la divisa base a la divisa destino.
    */
   convert(amount: number): number {
-    return Math.round(amount * this.rate * 100) / 100;
+    return amount * this.rate;
   }
 
   /**
@@ -25,6 +25,6 @@ export class ExchangeRate {
     if (this.rate === 0) {
       throw new Error('Cannot perform inverse conversion with a rate of 0');
     }
-    return Math.round((amount / this.rate) * 100) / 100;
+    return amount / this.rate;
   }
 }

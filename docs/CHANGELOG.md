@@ -8,6 +8,19 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 ## [Unreleased]
 
 ### Added
+- Verificación exhaustiva de Resiliencia y Base Documental:
+  - Ejecución integral del algoritmo `/derive` generando la Taxonomy MECE de 40 comportamientos.
+  - Sincronización oficial del `MASTER-SPEC.md §8` validando y trazando resiliencia para actores APP, EXT, OPS, USR.
+  - Actualización de cobertura y mapeo .HUM/.MIX en `TODO.md` preparando una base validada para el Frontend (EPIC-003).
+- EPIC-003: Frontend Institucional Vue 3 (Completado)
+  - Dependencias NPM congeladas (Strict Pinning) removiendo `^` y `~` en frontend previniendo ataques de cadena de suministro.
+  - PrimeVue v4 instalado junto con @primevue/themes bajo tema Aura.
+  - Interfaz implementada siguiendo Protocolo de Excelencia Visual institucional (OKLCH, Gestalt spacing).
+  - Proxy dev configurado en Vite enrutando `/api` y `/health` a backend interno.
+  - Componentes creados y orquestados: `ConversionForm`, `ResultDisplay`, `UfStatus`, `App`.
+- Implementación topológica dinámica mediante Grafos en `/api/currencies` proveyendo de reglas mutuamente excluyentes a la UI evitando hardcoding de lógica de presentación.
+- Refinamiento semántico visual de origen de datos (Cambio de `OPTIMIZADO` a `Valor vigente del día`).
+- Actualización final del `README.md` (EPIC-004 completado).
 - Eje documental inicializado: MASTER-SPEC, TODO, USER-DECISIONS, MEMORY, CHANGELOG
 - Research de APIs de UF chilena documentado en research/api-research.md
 - 7 decisiones arquitectonicas registradas en USER-DECISIONS.md (UD-001 a UD-007)

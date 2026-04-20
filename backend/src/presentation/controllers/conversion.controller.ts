@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ConvertCurrencyUseCase } from '../../application/use-cases/convert-currency.use-case';
+import { GetSupportedCurrenciesUseCase } from '../../application/use-cases/get-supported-currencies.use-case';
 import { ConvertDto } from '../dto/convert.dto';
 import { RedisCacheAdapter } from '../../infrastructure/adapters/redis-cache.adapter';
 
@@ -27,6 +28,7 @@ export class ConversionController {
 
   constructor(
     private readonly convertCurrencyUseCase: ConvertCurrencyUseCase,
+    private readonly getSupportedCurrenciesUseCase: GetSupportedCurrenciesUseCase,
     private readonly cacheAdapter: RedisCacheAdapter,
   ) {}
 
@@ -65,6 +67,24 @@ export class ConversionController {
   }
 
   /**
+   * GET /api/currencies
+   * Retorna lista de monedas soportadas para conversion
+   */
+  @Get('currencies')
+  async getSupportedCurrencies() {
+      try {
+          const currencies = await this.getSupportedCurrenciesUseCase.execute();
+          return currencies;
+      } catch (error) {
+          this.logger.error(`GET /api/currencies failed: ${error}`);
+          throw new HttpException(
+              { error: 'No se pudo obtener las monedas soportadas' },
+              HttpStatus.SERVICE_UNAVAILABLE,
+          );
+      }
+  }
+
+  /**
    * POST /api/convert
    * Ejecuta una conversion entre divisas.
    *
@@ -98,22 +118,36 @@ export class ConversionController {
         timestamp: result.timestamp,
       });
     } catch (error) {
-      this.logger.error(`POST /api/convert failed: ${error}`);
+      const technicalMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`POST /api/convert failed: ${technicalMessage}`);
 
-      if (
-        error instanceof Error &&
-        error.message.includes('does not support')
-      ) {
+      // Traduccion de Errores Tecnicos a Lenguaje Natural de Negocio (UX)
+      if (technicalMessage.includes('does not support pair')) {
         throw new HttpException(
-          { error: error.message },
+          { error: 'El proveedor configurado actualmente no soporta la conversión directa entre estas dos divisas particulares. Intenta convertir hacia CLP primero.' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      
+      if (technicalMessage.includes('does not support base currency')) {
+        throw new HttpException(
+          { error: 'La divisa de origen seleccionada se encuentra temporalmente deshabilitada o no es reconocida de forma válida.' },
           HttpStatus.BAD_REQUEST,
         );
       }
 
+      if (technicalMessage.includes('cannot convert')) {
+         throw new HttpException(
+          { error: 'Incongruencia algorítmica: El sistema no puede matemáticamente trazar esta ruta de conversión.' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Fallback a error genérico para la UI sin exponer trazas crudas del sistema
       throw new HttpException(
         {
-          error: 'La conversion no pudo completarse',
-          details: error instanceof Error ? error.message : String(error),
+          error: 'Servicio de conversión degradado. Por favor, intente nuevamente más tarde.',
+          // Solo devolvemos la razon natural, no el technicalMessage (que ya quedó en logger.error)
         },
         HttpStatus.SERVICE_UNAVAILABLE,
       );

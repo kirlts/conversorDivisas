@@ -24,7 +24,7 @@ async function bootstrap() {
 
   // Swagger / OpenAPI
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Conversor UF/CLP API')
+    .setTitle('Conversor de Divisas')
     .setDescription(
       'API REST de conversion de divisas con arquitectura hexagonal. ' +
       'Proveedor primario: findic.cl. Fallback: SQLite. Cache: Redis.',

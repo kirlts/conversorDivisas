@@ -141,24 +141,22 @@ export class ConvertCurrencyUseCase implements OnModuleInit {
     );
   }
 
-  /**
-   * Normaliza el par de divisas para que la base sea siempre la divisa "exotica" (UF).
-   * Esto simplifica la busqueda en cache y API.
-   */
   private normalizePair(
     from: string,
     to: string,
   ): { base: string; target: string } {
-    // Por convencion, si una de las dos es una divisa indexada (UF, UTM),
-    // esa es la base.
-    const indexed = ['UF', 'UTM', 'IVP'];
-    if (indexed.includes(from.toUpperCase())) {
-      return { base: from.toUpperCase(), target: to.toUpperCase() };
+    const fromUpper = from.toUpperCase();
+    const toUpper = to.toUpperCase();
+
+    // Si una de las divisas es puramente moneda objetivo base (CLP), la otra debe ser la base a buscar.
+    if (toUpper === 'CLP' || toUpper === 'USD') {
+        return { base: fromUpper, target: toUpper };
     }
-    if (indexed.includes(to.toUpperCase())) {
-      return { base: to.toUpperCase(), target: from.toUpperCase() };
+    if (fromUpper === 'CLP' || fromUpper === 'USD') {
+        return { base: toUpper, target: fromUpper };
     }
-    // Default: el primer argumento es la base
-    return { base: from.toUpperCase(), target: to.toUpperCase() };
+
+    // Default estricto
+    return { base: fromUpper, target: toUpper };
   }
 }

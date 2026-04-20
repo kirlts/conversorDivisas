@@ -1,5 +1,76 @@
-/* Estilos globales (Epic 3) */
+/*
+ * Conversor UF/CLP Institutional Theme
+ * Atmosphere: Trusted financial institution.
+ * Typography: Inter (Sans-Serif), cleanly tracked, highly legible.
+ * Chromatic: Deep corporate blue, success green tokens, off-white backgrounds.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Institutional Palette (Tokens) */
+  --corporate-blue: oklch(0.35 0.1 260); /* Deep authoritive blue */
+  --success-green: oklch(0.6 0.15 150);
+  --surface: oklch(0.99 0.01 260);
+  --text-primary: oklch(0.2 0.05 260);
+  --text-muted: oklch(0.5 0.05 260);
+  --border: oklch(0.85 0.02 260);
+  
+  /* PrimeVue overrides */
+  --p-primary-color: var(--corporate-blue);
+  --p-border-color: var(--border);
+  --p-text-color: var(--text-primary);
+
+  /* Spacing Rhythm (Gestalt scale) */
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: oklch(0.96 0.01 260); /* subtle off-white for depth */
+}
+
+/* Base resets & layouts */
+#app {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-md);
+}
+
+/* Institutional Card Layout */
+.institutional-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Soft, low-frequency shadow */
+  border: 1px solid var(--border);
+  padding: var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.brand-header {
+  text-align: center;
+}
+.brand-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--corporate-blue);
+  margin: 0 0 var(--space-sm) 0;
+}
+.brand-header p {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 0.875rem;
 }

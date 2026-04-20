@@ -26,17 +26,47 @@ export class FindicProvider implements ExchangeRateProviderPort {
    */
   private readonly INDICATOR_MAP: Record<string, string> = {
     UF: 'uf',
+    USD: 'dolar',
+    EUR: 'euro',
+    UTM: 'utm',
+    YEN: 'yen',
+    BTC: 'bitcoin',
+    ETH: 'ethereum'
   };
+
+  async getSupportedCurrencies(): Promise<string[]> {
+    return ['CLP', ...Object.keys(this.INDICATOR_MAP)];
+  }
+
+  async getSupportedPairs(): Promise<Record<string, string[]>> {
+    return {
+      CLP: ['UF', 'USD', 'EUR', 'UTM', 'YEN'],
+      UF: ['CLP'],
+      USD: ['CLP', 'BTC', 'ETH'],
+      EUR: ['CLP'],
+      UTM: ['CLP'],
+      YEN: ['CLP'],
+      BTC: ['USD'],
+      ETH: ['USD']
+    };
+  }
 
   async getExchangeRate(
     baseCurrency: string,
     targetCurrency: string,
   ): Promise<ExchangeRate> {
-    const indicator = this.INDICATOR_MAP[baseCurrency.toUpperCase()];
+    const base = baseCurrency.toUpperCase();
+    const target = targetCurrency.toUpperCase();
+    
+    const indicator = this.INDICATOR_MAP[base];
     if (!indicator) {
-      throw new Error(
-        `FindicProvider does not support base currency: ${baseCurrency}`,
-      );
+      throw new Error(`FindicProvider does not support base currency: ${base}`);
+    }
+
+    // Findic.cl devuelve en USD para crypto, en CLP para el resto
+    const expectedTarget = (base === 'BTC' || base === 'ETH') ? 'USD' : 'CLP';
+    if (target !== expectedTarget) {
+      throw new Error(`FindicProvider does not support pair: ${base}/${target}. Expected target for ${base} is ${expectedTarget} in this adapter.`);
     }
 
     const url = `${this.BASE_URL}/${indicator}`;

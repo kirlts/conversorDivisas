@@ -9,6 +9,9 @@ export interface ExchangeRateProviderPort {
     baseCurrency: string,
     targetCurrency: string,
   ): Promise<ExchangeRate>;
+
+  getSupportedCurrencies(): Promise<string[]>;
+  getSupportedPairs(): Promise<Record<string, string[]>>;
 }
 
 export const EXCHANGE_RATE_PROVIDER = Symbol('ExchangeRateProviderPort');

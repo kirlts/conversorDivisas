@@ -125,3 +125,38 @@
 **Consecuencias:**
 - Ningun contenedor arrancará degradado por falta circunstancial de secretos críticos o malformaciones sútiles.
 **Condiciones de reversion:** Ninguna aplicabe para produccion B2B/Enterprise.
+
+## [UD-010] Adopcion de PrimeVue como Frontend Framework UI
+
+**Fecha:** 2026-04-20
+**Contexto:** El desarrollo del frontend requiere de una interfaz "institucional y profesional" sin consumir recursos en la configuracion manual de CSS o lidiar de cero con Tailwind.
+**Decision:** Instalar PrimeVue v4 como framework de componentes UI.
+**Alternativas descartadas:**
+- Tailwind CSS crudo: prohibido por las reglas base salvo peticion expresa, requiere alto tiempo en posicionamiento estructurado.
+- CSS Vanilla manual: excesivo overhead para inputs y estado (disabled, focus, etc).
+**Consecuencias:**
+- Los componentes UI (Cards, Inputs, Messages) se delegan a PrimeVue.
+- Sistema de theming 100% basado en propiedades CSS nativas.
+**Condiciones de reversion:** No aplica.
+
+## [UD-011] Pinning Estricto de Dependencias NPM (Zero-Trust)
+
+**Fecha:** 2026-04-20
+**Contexto:** La seguridad B2B/Aseguradora Internacional requiere prevenir ataques de cadena de suministro (Supply Chain Attacks).
+**Decision:** Congelar todas las dependencias en `frontend/package.json` removiendo los prefijos `^` y `~`.
+**Alternativas descartadas:**
+- Versiones flotantes: vulnerables a inyecciones maliciosas si el lockfile se corrompe o ignora.
+**Consecuencias:**
+- El build Frontend se vuelve 100% determinista e inmutable.
+- Toda actualizacion requerira auditoria manual y re-pinneado.
+**Condiciones de reversion:** No aplica para este estandar de seguridad.
+## [UD-012] Grafo Topológico para UX Agnostica
+
+**Fecha:** 2026-04-20
+**Contexto:** Los inputs del conversor originaban errores (HTTP 400 Pair Not Supported) si el usuario seleccionaba "USD" a "EUR" al no soportarlo Findic. Hardcodear en frontend un bloqueo a las opciones "A" o "De" rompería el Agnosticismo forzando reglas de negocio estáticas en Vue.
+**Decision:** El backend expone en `GET /api/currencies` una matriz estricta de topología/adyacencia basada en sus adaptadores. El Frontend se autodeshabilita consumiendo ese árbol predictivamente (Ej: seleccionas `BTC`, desactiva todas las opciones menos `USD`).
+**Alternativas descartadas:**
+- Bloqueo front via Hardcoding (`if(from === 'UF')` ...): Antipatrón (Leaking de Dominio al cliente).
+**Consecuencias:**
+- El frontend puede engullir Binance, CMF, o Findic mañana, y mutará reactivamente y sin tocar código fuente las divisas mutuamente excluyentes en la UI.
+**Condiciones de reversion:** No aplica.

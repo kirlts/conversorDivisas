@@ -1,4 +1,4 @@
-# MASTER-SPEC: Conversor UF/CLP v0.1.0
+# MASTER-SPEC: Conversor de Divisas v0.1.0
 
 > Herramienta de conversion bidireccional entre Unidad de Fomento (UF) y Peso Chileno (CLP) con arquitectura hexagonal, cache inteligente y resiliencia ante caida de proveedores externos.
 
@@ -8,7 +8,7 @@
 
 **Proposito:** Permitir la conversion precisa y confiable entre divisas (notablemente UF y CLP) consumiendo el valor oficial desde APIs externas, con cache en Redis y persistencia de respaldo en SQLite. Diseñado para procesamiento ininterrumpido en entornos criticos aplicando rigor arquitectonico.
 
-**Nombre:** Conversor UF/CLP
+**Nombre:** Conversor de Divisas
 
 **Dominio:** FinTech / Indicadores Economicos Chilenos
 
@@ -60,7 +60,7 @@
 
 | Capa | Tecnologia | Justificacion |
 |---|---|---|
-| Frontend | Vue 3 + Vite (TypeScript) | Solucion de vanguardia documentada como el estandar en la organizacion. Vue 3 Composition API es sumamente eficiente y propicio al testing. |
+| Frontend | Vue 3 + Vite + PrimeVue (TypeScript) | Solucion de vanguardia con UI institucional Zero-CSS. Componentes pre-testeados y theme con variables CSS nativas sin compilar SASS ni usar Tailwind. |
 | Backend | NestJS (TypeScript) | Framework con soporte nativo para inversion de dependencias, modulos y decoradores. Facilita patron hexagonal |
 | Cache | Redis 7.x | Almacen clave-valor en memoria. La UF es inmutable por dia, cache es el patron correcto. Persistencia RDB activada |
 | Seguridad | @nestjs/throttler | Limitacion asimetrica de la tasa de peticiones (Rate Limiting) con topes duros para healthchecks (via Throttler) mitigando ataques L7 y DDOS a adaptadores. |
@@ -202,25 +202,4 @@ GET /health
 
 **Dependencias:** @nestjs/swagger
 
----
 
-## §8. Checklist de Verificacion
-
-> Pendiente verificacion formal; ejecutar `/derive` para poblar esta seccion.
-
-<!--
-Taxonomy: [ACTOR.CATEGORY.NN.VER]
-Actors: Defined by /derive according to the project
-Categories: AV (Availability), FN (Functionality), CR (Correctness), IN (Integrity), RS (Resilience)
-Verifier (VER): LLM (automatable), HUM (requires human), MIX (pre-verifiable + human)
-
-Check format:
-  🧑 `[ACTOR.CAT.NN.HUM]` Action → Result. *(Validated promise)*
-  🤖 `[ACTOR.CAT.NN.LLM]` Action → Result. *(Validated promise)*
-  🤖🧑 `[ACTOR.CAT.NN.MIX]` Action → Result. *(Validated promise)*
-
-Implementation format (with mandatory timestamp):
-  ✅ Implemented (🤖 Verified by [tool]; YYYY-MM-DD HH:MM)
-  ✅ Implemented (🧑 Confirmed by user; YYYY-MM-DD HH:MM)
-  ✅ Implemented (🤖🧑 Pre-verified by [tool], confirmed by user; YYYY-MM-DD HH:MM)
--->

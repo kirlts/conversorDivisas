@@ -1,6 +1,6 @@
-# TODO: Conversor UF/CLP v0.1.0
+# TODO: Conversor de Divisas v0.1.0
 
-> Trazabilidad directa: cada tarea referencia checks de `MASTER-SPEC.md` §8.
+> Trazabilidad directa: cada tarea referencia checks de `VERIFICATION.md`.
 
 ## Leyenda de Simbolos Kairos
 
@@ -134,19 +134,30 @@
 
 **Covered checks:** Transversal governance
 
-- [ ] Inicializar proyecto con Vite + Vue 3 + TypeScript
-- [ ] Configurar proxy de desarrollo hacia backend (puerto 3000)
+- [x] Inicializar proyecto con Vite + Vue 3 + TypeScript; 2026-04-20 11:50 [🤖 Verified by tool]
+- [x] Configurar proxy de desarrollo hacia backend (puerto 3000); 2026-04-20 12:05 [🤖 Verified by tool]
+
+### [TASK-017] Hardening y Setup de Interfaz Institucional (PrimeVue)
+
+**Covered checks:** Transversal governance
+
+- [x] Aplicar Strict Pinning de dependencias actuales (remover `^` y `~`); 2026-04-20 11:52 [🤖 Verified by tool]
+- [x] Instalar PrimeVue y @primevue/themes con versiones exactas; 2026-04-20 12:05 [🤖 Verified by tool]
+- [x] Aislar variables de color y tipografia (Inter/Roboto) en archivo CSS principal; 2026-04-20 12:05 [🤖 Verified by tool]
+- [x] Configurar PrimeVue en main.ts; 2026-04-20 12:05 [🤖 Verified by tool]
+
 
 ### [TASK-010] Componentes de interfaz
 
 > Ref: MASTER-SPEC §6
 
-**Covered checks:** Transversal governance
+**Covered checks:** [USR.AV.01.MIX], [USR.AV.02.HUM], [USR.FN.01.MIX], [USR.FN.02.MIX], [USR.FN.03.HUM], [USR.CR.02.HUM], [USR.RS.01.MIX], [USR.RS.02.MIX] 
+> [Requires human validation]
 
-- [ ] ConversionForm: input numerico + selector de direccion + boton convertir
-- [ ] ResultDisplay: resultado con metadata (valor UF, fuente, timestamp)
-- [ ] UfStatus: indicador del valor UF actual y estado del servicio
-- [ ] Estilos: paleta institucional (azul oscuro, blanco, verde exito)
+- [x] ConversionForm: adaptado a selector agnóstico /api/currencies; 2026-04-20 13:00 [🤖🧑 Verified by MIX]
+- [x] ResultDisplay: sin leaking de metadata técnica; 2026-04-20 13:00 [🤖🧑 Verified by MIX]
+- [x] RateStatus (ex-UfStatus): inyección de salud semántica; 2026-04-20 13:00 [🤖🧑 Verified by MIX]
+- [x] Estilos: paleta institucional (Zero-CSS, blue tokens); 2026-04-20 13:00 [🤖🧑 Verified by MIX]
 
 ---
 
@@ -160,12 +171,12 @@
 
 **Covered checks:** Transversal governance
 
-- [ ] Descripcion del proyecto
-- [ ] Prerrequisitos (Docker, Docker Compose)
-- [ ] Instrucciones de ejecucion (`docker compose up`)
-- [ ] Seccion de Decisiones de Arquitectura (ADR minimo)
-- [ ] Exclusiones documentadas (mindicador.cl, BCCH, RapidAPI, scraping)
-- [ ] Documentar endpoints REST disponibles (curl examples)
+- [x] Descripcion del proyecto; 2026-04-20 13:30 [🤖🧑 Verified by MIX]
+- [x] Prerrequisitos (Docker, Docker Compose); 2026-04-20 13:30 [🤖🧑 Verified by MIX]
+- [x] Instrucciones de ejecucion (`docker compose up`); 2026-04-20 13:30 [🤖🧑 Verified by MIX]
+- [x] Seccion de Decisiones de Arquitectura (ADR minimo); 2026-04-20 13:30 [🤖🧑 Verified by MIX]
+- [x] Exclusiones documentadas (mindicador.cl, BCCH, RapidAPI, scraping); 2026-04-20 13:30 [🤖🧑 Verified by MIX]
+- [x] Documentar endpoints REST disponibles (curl examples); 2026-04-20 13:30 [🤖🧑 Verified by MIX]
 
 ---
 
@@ -221,8 +232,8 @@
 
 | Epic | Tareas | Estado | 🤖 .LLM | 🧑 .HUM | 🤖🧑 .MIX | Total Checks |
 |---|---|---|---|---|---|---|
-| EPIC-001 | TASK-001, TASK-002 | ✅ Completado | 0 | 0 | 0 | 0 |
-| EPIC-002 | TASK-003 a TASK-008 | ✅ Completado | 0 | 0 | 0 | 0 |
-| EPIC-005 | TASK-012 a TASK-016 | ✅ Completado | 0 | 0 | 0 | 0 |
-| EPIC-003 | TASK-009, TASK-010 | 🔲 Pendiente | 0 | 0 | 0 | 0 |
-| EPIC-004 | TASK-011 | 🔲 Pendiente | 0 | 0 | 0 | 0 |
+| EPIC-001 | TASK-001, TASK-002 | ✅ Completado | 7 | 0 | 0 | 7 |
+| EPIC-002 | TASK-003 a TASK-008 | ✅ Completado | 18 | 0 | 0 | 18 |
+| EPIC-005 | TASK-012 a TASK-016 | ✅ Completado | 5 | 0 | 0 | 5 |
+| EPIC-003 | TASK-009, TASK-010, TASK-017 | ✅ Completado | 2 | 3 | 5 | 10 |
+| EPIC-004 | TASK-011 | ✅ Completado | 0 | 0 | 6 | 6 |
