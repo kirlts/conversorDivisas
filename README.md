@@ -19,6 +19,7 @@ Proyecto construido bajo los principios de **Arquitectura Hexagonal (Puertos y A
 
 **Resiliencia Operativa:**
 El ecosistema implementa prevención de fallos en cascada (Caché -> API con *Exponential Backoff* -> Fallback a BD), limitación asimétrica de ráfagas de tráfico (*Rate-Limiting*) y arranque protegido por esquemas (`Joi`) que prohíben instanciaciones degradadas por falta de variables.
+
 ---
 
 ## Requisitos Previos
