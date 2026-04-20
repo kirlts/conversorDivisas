@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: conversor_redis
+    # Activar persistencia RDB
+    # save 3600 1 -> Guardar cada 3600 segundos si hubo al menos 1 cambio
+    command: redis-server --save 3600 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      target: development
+    container_name: conversor_backend
+    ports:
+      - "3000:3000"  # Mapeado al host para consultas directas independientemente del frontend
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - CMF_API_KEY=${CMF_API_KEY:-}
+      - WARMUP_PAIRS=UF:CLP
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      # Volumen para persistencia de SQLite (sqlite default db folder o archivo root)
+      - sqlite_data:/usr/src/app/data
+    command: npm run start:dev
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    container_name: conversor_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  sqlite_data:
